@@ -9,6 +9,8 @@ public class SpringBootHelloWorldApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBootHelloWorldApplication.class, args);
 		System.out.println("hello world");
+
+		System.out.println("chala hawa yeu dya...!!!s");
 	}
 
 }
