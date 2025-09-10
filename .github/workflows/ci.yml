@@ -1,0 +1,35 @@
+name: Build Spring Boot with Docker
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up JDK 21
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # Step 3: Build project with Maven
+      - name: Build with Maven
+        run: mvn -B clean package -DskipTests
+
+      # Step 4: Build Docker image
+      - name: Build Docker image
+        run: docker build -t spring-boot-hello:latest .
+
+      # Step 5: Run Docker container (optional)
+      - name: Run Docker container
+        run: docker run -d -p 8080:8080 spring-boot-hello:latest
