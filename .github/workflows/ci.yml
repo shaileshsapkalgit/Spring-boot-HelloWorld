@@ -1,4 +1,4 @@
-name: Build Spring Boot with Docker
+name: Build Spring Boot with Docker and Push to AWS ECR
 
 on:
   push:
@@ -26,10 +26,30 @@ jobs:
       - name: Build with Maven
         run: mvn -B clean package -DskipTests
 
-      # Step 4: Build Docker image
-      - name: Build Docker image
-        run: docker build -t spring-boot-hello:latest .
+      # Step 4: Configure AWS Credentials
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      # Step 5: Run Docker container (optional)
-      - name: Run Docker container
-        run: docker run -d -p 8080:8080 spring-boot-hello:latest
+      # Step 5: Login to Amazon ECR
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Step 6: Build, Tag, and Push Docker Image to ECR
+      - name: Build, Tag, and Push Docker Image
+        run: |
+          IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}
+          echo "Building image: $IMAGE_URI"
+          docker build -t $IMAGE_URI .
+          docker push $IMAGE_URI
+
+      # (Optional) Step 7: Tag as "latest" too
+      - name: Tag and Push Latest
+        run: |
+          LATEST_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
+          docker tag ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }} $LATEST_URI
+          docker push $LATEST_URI
