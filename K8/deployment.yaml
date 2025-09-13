@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: springboot
-          image: <aws_account_id>.dkr.ecr.us-east-1.amazonaws.com/<repo-name>:latest
+          image: 531390799262.dkr.ecr.us-east-1.amazonaws.com/shaileshsapkalgit/springboothelloworld:latest
           ports:
             - containerPort: 8080
 ---
