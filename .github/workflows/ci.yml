@@ -50,11 +50,11 @@ jobs:
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
 
-      # Step 8: Install kubectl automatically
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v3
+      # Step 8: Install kubectl using AWS Action (replaces manual curl)
+      - name: Install kubectl
+        uses: aws-actions/setup-kubectl@v3
         with:
-          version: '1.32.8'  # matches your EKS cluster version
+          version: '1.32'  # Match your EKS cluster version
 
       # Step 9: Update kubeconfig for EKS
       - name: Update kubeconfig
