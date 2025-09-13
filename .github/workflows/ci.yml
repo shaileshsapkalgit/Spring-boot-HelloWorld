@@ -71,7 +71,7 @@ jobs:
       - name: Deploy to EKS
         run: |
           # Apply deployment YAML (if you want to create it initially)
-          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f K8/deployment.yaml
           
           # Update Deployment image to the latest build
           IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
